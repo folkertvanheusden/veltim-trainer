@@ -45,7 +45,7 @@ font_big = pygame.font.Font(pygame.font.get_default_font(), dy)
 def draw_screen(velocities, intervals):
     screen.fill(BLACK)
 
-    text_surface = font_small.render('vel-trainer, (C) 2021 by folkert@vanheusden.com', True, WHITE)
+    text_surface = font_small.render('veltim-trainer, (C) 2021 by folkert@vanheusden.com', True, WHITE)
     screen.blit(text_surface, dest=(0, 0))
 
     info = "press 'q' to exit"
