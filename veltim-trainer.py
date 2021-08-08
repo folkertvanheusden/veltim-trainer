@@ -95,6 +95,12 @@ def draw_screen(velocities, intervals):
         elif not intervals[i] is None:
             pygame.draw.line(screen, BLUE, [(i + 1) * mul, 50 + 127], [(i + 1) * mul, 50], 1)
 
+    text_surface = font_small.render('velocity', True, WHITE)
+    screen.blit(text_surface, dest=(0, 50 + 127 + 8))
+
+    text_surface = font_small.render('interval', True, WHITE)
+    screen.blit(text_surface, dest=(0, 408))
+
     pygame.display.flip()
 
 running = True
