@@ -95,7 +95,10 @@ def draw_screen(velocities, intervals):
 
         if val_i < 2.0 and next_i < 2.0:
             pygame.draw.line(screen, WHITE, [i * mul, 400 - val_i * 100], [(i + 1) * mul, 400 - next_i * 100], line_width)
- 
+
+        elif not intervals[i] is None:
+            pygame.draw.line(screen, BLUE, [(i + 1) * mul, 50 + 127], [(i + 1) * mul, 50], 1)
+
     pygame.display.flip()
 
 running = True
