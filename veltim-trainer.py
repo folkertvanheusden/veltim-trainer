@@ -33,7 +33,7 @@ bar_size = 4
 screen_info = pygame.display.Info()
 size = [screen_info.current_w, screen_info.current_h]
 
-screen = pygame.display.set_mode(size)  # FIXME, pygame.FULLSCREEN)
+screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 
 qx = size[0] // 4
 qy = size[1] // 4
@@ -78,10 +78,13 @@ def draw_screen(velocities, intervals):
  
     pygame.display.flip()
 
+running = True
+
 def midi_poller():
     global midi_in
+    global running
 
-    while True:
+    while running:
         # really need blocking functions here
         while not midi_in.poll():
             time.sleep(0.001)
@@ -105,10 +108,11 @@ interval = [ 0 ] * 100
 
 draw_screen(velocities, interval)
 
-while True:
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            sys.exit(0)
+            running = False
+            break
 
         if event.type == pygame.midi.MIDIIN:
             cmd = event.status & 0xf0
@@ -135,6 +139,7 @@ while True:
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
-                sys.exit(0)
+                running = False
+                break
 
 pygame.quit()
