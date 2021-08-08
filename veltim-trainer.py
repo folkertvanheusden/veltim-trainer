@@ -8,6 +8,14 @@ import pygame.midi
 import threading
 import time
 
+# configurable parameters
+line_width = 2
+
+max_interval = 2.0
+
+n_points = 100
+###
+
 pygame.init()
 
 pygame.fastevent.init()
@@ -21,26 +29,14 @@ RED   = (255,  40,  40)
 GREEN = ( 40, 255,  40)
 BLUE  = ( 40,  40, 255)
 
-line_width = 2
-
-bar_size = 4
-
 screen_info = pygame.display.Info()
 size = [screen_info.current_w, screen_info.current_h]
 
 screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 
-qx = size[0] // 4
-qy = size[1] // 4
-dx = size[0] // 2 // bar_size
-dy = size[1] // 2 // 5
-
-pygame.display.set_caption('Tap-trainer')
-
-count_ok = count_fail = 0
+pygame.display.set_caption('veltim-trainer')
 
 font_small = pygame.font.Font(pygame.font.get_default_font(), 16)
-font_big = pygame.font.Font(pygame.font.get_default_font(), dy)
 
 def draw_screen(velocities, intervals):
     screen.fill(BLACK)
@@ -50,7 +46,7 @@ def draw_screen(velocities, intervals):
 
     info = "press 'q' to exit"
 
-    mul = size[0] / 100.0
+    mul = size[0] / n_points
 
     pygame.draw.line(screen, RED, [0, 50 + 127], [size[0], 50 + 127], 1)
     pygame.draw.line(screen, GREEN, [0, 50], [size[0], 50], 1)
@@ -59,7 +55,7 @@ def draw_screen(velocities, intervals):
 
     median_v = []
     median_i = []
-    for i in range(0, 100):
+    for i in range(0, n_points):
         if not velocities[i] is None:
             median_v.append(velocities[i])
             median_i.append(intervals[i])
@@ -73,12 +69,12 @@ def draw_screen(velocities, intervals):
 
         pygame.draw.line(screen, BLUE, [0, 50 + 127 - m_v], [size[0], 50 + 127 - m_v], 1)
 
-        if m_i < 2.0:
+        if m_i < max_interval:
             pygame.draw.line(screen, BLUE, [0, 400 - m_i * 100], [size[0], 400 - m_i * 100], 1)
 
-    for i in range(0, 100):
+    for i in range(0, n_points):
         val_v = velocities[i] if not velocities[i] is None else 127
-        val_i = intervals[i] if not intervals[i] is None else 2.0
+        val_i = intervals[i] if not intervals[i] is None else max_interval
 
         if i < 99:
             next_v = velocities[i + 1]
@@ -89,11 +85,11 @@ def draw_screen(velocities, intervals):
             next_i = intervals[i]
 
         next_v = next_v if not next_v is None else 127
-        next_i = next_i if not next_i is None else 2.0
+        next_i = next_i if not next_i is None else max_interval
 
         pygame.draw.line(screen, WHITE, [i * mul, 50 + 127 - val_v], [(i + 1) * mul, 50 + 127 - next_v], line_width)
 
-        if val_i < 2.0 and next_i < 2.0:
+        if val_i < max_interval and next_i < max_interval:
             pygame.draw.line(screen, WHITE, [i * mul, 400 - val_i * 100], [(i + 1) * mul, 400 - next_i * 100], line_width)
 
         elif not intervals[i] is None:
@@ -126,8 +122,8 @@ pos = 0
 
 prev_ts = None
 
-velocities = [ None ] * 100
-interval = [ None ] * 100
+velocities = [ None ] * n_points
+interval = [ None ] * n_points
 
 draw_screen(velocities, interval)
 
@@ -146,7 +142,7 @@ while running:
             if cmd == 0x90 and channel != 9 and velocity > 0:  # note-on, no percussion
                 now = time.time()
 
-                while len(velocities) >= 100:
+                while len(velocities) >= n_points:
                     del velocities[0]
                     del interval[0]
 
