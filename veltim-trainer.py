@@ -62,7 +62,27 @@ def draw_screen(velocities, intervals):
 
     pygame.draw.line(screen, GREEN, [0, 400], [size[0], 400], 1)
 
+    total_v = total_i = 0
+    cnt = 0
     for i in range(0, 100):
+        if not velocities[i] is None:
+            total_v += velocities[i]
+            total_i += intervals[i]
+            cnt += 1
+
+    if cnt > 0:
+        avg_v = total_v / cnt
+        avg_i = total_i / cnt
+
+        pygame.draw.line(screen, BLUE, [0, 50 + 127 - avg_v], [size[0], 50 + 127 - avg_v], 1)
+
+        if avg_i < 2.0:
+            pygame.draw.line(screen, BLUE, [0, 400 - avg_i * 100], [size[0], 400 - avg_i * 100], 1)
+
+    for i in range(0, 100):
+        val_v = velocities[i] if not velocities[i] is None else 127
+        val_i = intervals[i] if not intervals[i] is None else 2.0
+
         if i < 99:
             next_v = velocities[i + 1]
             next_i = intervals[i + 1]
@@ -71,10 +91,13 @@ def draw_screen(velocities, intervals):
             next_v = velocities[i]
             next_i = intervals[i]
 
-        pygame.draw.line(screen, WHITE, [i * mul, 50 + 127 - velocities[i]], [(i + 1) * mul, 50 + 127 - next_v], line_width)
+        next_v = next_v if not next_v is None else 127
+        next_i = next_i if not next_i is None else 2.0
 
-        if intervals[i] < 2.0 and next_i < 2.0:
-            pygame.draw.line(screen, WHITE, [i * mul, 400 - intervals[i] * 100], [(i + 1) * mul, 400 - next_i * 100], line_width)
+        pygame.draw.line(screen, WHITE, [i * mul, 50 + 127 - val_v], [(i + 1) * mul, 50 + 127 - next_v], line_width)
+
+        if val_i < 2.0 and next_i < 2.0:
+            pygame.draw.line(screen, WHITE, [i * mul, 400 - val_i * 100], [(i + 1) * mul, 400 - next_i * 100], line_width)
  
     pygame.display.flip()
 
@@ -103,8 +126,8 @@ pos = 0
 
 prev_ts = None
 
-velocities = [ 0 ] * 100
-interval = [ 0 ] * 100
+velocities = [ None ] * 100
+interval = [ None ] * 100
 
 draw_screen(velocities, interval)
 
