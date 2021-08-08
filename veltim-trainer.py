@@ -5,13 +5,8 @@
 
 import pygame
 import pygame.midi
-import random
-import sys
 import threading
 import time
-
-from enum import Enum
-from os.path import expanduser
 
 pygame.init()
 
@@ -62,22 +57,24 @@ def draw_screen(velocities, intervals):
 
     pygame.draw.line(screen, GREEN, [0, 400], [size[0], 400], 1)
 
-    total_v = total_i = 0
-    cnt = 0
+    median_v = []
+    median_i = []
     for i in range(0, 100):
         if not velocities[i] is None:
-            total_v += velocities[i]
-            total_i += intervals[i]
-            cnt += 1
+            median_v.append(velocities[i])
+            median_i.append(intervals[i])
 
-    if cnt > 0:
-        avg_v = total_v / cnt
-        avg_i = total_i / cnt
+    if len(median_v) > 0:
+        median_v = sorted(median_v)
+        median_i = sorted(median_i)
 
-        pygame.draw.line(screen, BLUE, [0, 50 + 127 - avg_v], [size[0], 50 + 127 - avg_v], 1)
+        m_v = median_v[len(median_v) // 2]
+        m_i = median_i[len(median_i) // 2]
 
-        if avg_i < 2.0:
-            pygame.draw.line(screen, BLUE, [0, 400 - avg_i * 100], [size[0], 400 - avg_i * 100], 1)
+        pygame.draw.line(screen, BLUE, [0, 50 + 127 - m_v], [size[0], 50 + 127 - m_v], 1)
+
+        if m_i < 2.0:
+            pygame.draw.line(screen, BLUE, [0, 400 - m_i * 100], [size[0], 400 - m_i * 100], 1)
 
     for i in range(0, 100):
         val_v = velocities[i] if not velocities[i] is None else 127
