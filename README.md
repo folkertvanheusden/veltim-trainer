@@ -10,4 +10,9 @@ requires
 * python3-rtmidi
 
 
+screenshot
+----------
+![screenshot](imgs/veltim.png)
+
+
 (C) 2021 by Folkert van Heusden <mail@vanheusden.com>
